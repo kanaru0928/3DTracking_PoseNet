@@ -2,9 +2,11 @@ import os
 import cv2
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
-import matplotlib.pyplot as plt
 import matplotlib as mpl
-from config import cfg
+import matplotlib.pyplot as plt
+from posenet.main.config import cfg
+
+# mpl.use('Agg')
 
 def vis_keypoints(img, kps, kps_lines, kp_thresh=0.4, alpha=1):
 
@@ -76,7 +78,7 @@ def vis_3d_skeleton(kpt_3d, kpt_3d_vis, kps_lines, filename=None):
     cv2.waitKey(0)
 
 def vis_3d_multiple_skeleton(kpt_3d, kpt_3d_vis, kps_lines, filename=None):
-
+    mpl.use('TkAgg')
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
 
@@ -84,7 +86,9 @@ def vis_3d_multiple_skeleton(kpt_3d, kpt_3d_vis, kps_lines, filename=None):
     cmap = plt.get_cmap('rainbow')
     colors = [cmap(i) for i in np.linspace(0, 1, len(kps_lines) + 2)]
     colors = [np.array((c[2], c[1], c[0])) for c in colors]
-
+    
+    print(colors)
+    
     for l in range(len(kps_lines)):
         i1 = kps_lines[l][0]
         i2 = kps_lines[l][1]
@@ -112,6 +116,6 @@ def vis_3d_multiple_skeleton(kpt_3d, kpt_3d_vis, kps_lines, filename=None):
     ax.set_zlabel('Y Label')
     ax.legend()
     
-    plt.show()
-    cv2.waitKey(0)
+    fig.savefig('3dpose.png')
 
+    plt.show()
