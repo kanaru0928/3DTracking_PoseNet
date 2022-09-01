@@ -47,6 +47,23 @@ class Args:
         self.test_epoch = test_epoch
 
 class Posenet:
+    """PoseNetの処理を行うクラス
+    
+    Attributes
+    ----------
+    joint_num : int
+        関節の数
+    joints_name : tuple[str]
+        関節の名前
+    flip_pairs : tuple[tuple[int]]
+        対称になる関節ペア
+    skelton : tuple[tuple[int]]
+        関節の親子関係ペア
+    model : nn.Module
+        NNモデル
+    transform : transforms
+        画像に適用するトランスフォーム
+    """
     def __init__(self, args) -> None:
         cfg.set_args(args.gpu_ids)
         cudnn.benchmark = True
@@ -72,6 +89,24 @@ class Posenet:
         self.transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize(mean=cfg.pixel_mean, std=cfg.pixel_std)])
 
     def get_pose(self, original_img, bbox_list, root_depth_list, vis=False):
+        """相対姿勢を取得
+
+        Parameters
+        ----------
+        original_img : np.ndarray
+            OpenCVで取得した画像
+        bbox_list : array_like
+            BoundingBoxのリスト
+        root_depth_list : array_like
+            RootNetの結果のリスト
+        vis : bool, optional
+            画像出力, by default False
+
+        Returns
+        -------
+        np.ndarray
+            関節位置
+        """
         transform = self.transform
         model = self.model
         joints_name = self.joints_name
